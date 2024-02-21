@@ -1,0 +1,11 @@
+*pycache*
+venv
+*.pyc
+.env
+logs/*
+!logs/.gitkeep
+temp/*
+!temp/.gitkeep
+service-account.json
+.vscode/*
+.DS_Store
