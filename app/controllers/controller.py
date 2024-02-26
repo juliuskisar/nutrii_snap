@@ -1,5 +1,6 @@
 import base64
-from app.database.schema import ClientSchema, PictureSchema, UploadFileInterface
+from collections import Counter
+from app.database.schema import ClientSchema, PictureSchema, ReportInterface, UploadFileInterface
 from app.service.service import Service
 from fastapi import APIRouter, HTTPException, UploadFile
 from fastapi_utils.cbv import cbv
@@ -63,7 +64,17 @@ class Controller:
     
     @router.get("/get_weekly_report")
     def get_weekly_report(self):
-        pass
+        meals = self.repository.get_all_pictures()
+        healthy_counter = Counter([meal.is_healty for meal in meals])
+        total_calories = sum([int(meal.total_calories) for meal in meals])
+        average_calories = total_calories / len(meals)
+        return ReportInterface(
+            healthy_meals=healthy_counter[True],
+            total_meals=len(meals),
+            unhealthy_meals=healthy_counter[False],
+            total_calories=total_calories,
+            average_calories=average_calories
+        )
 
     @router.get("/get_info/{client_uuid}")
     def get_picture_info(self, client_uuid: str, picture_uuid: str):
@@ -72,5 +83,3 @@ class Controller:
     @router.get("/get_meals_list")
     def get_meals_list(self, client_uuid: str):
         return self.repository.get_all_pictures(client_uuid=client_uuid)
-
-

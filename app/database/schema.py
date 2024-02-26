@@ -41,4 +41,11 @@ class UploadFileInterface(BaseModel):
     client_uuid: str
     name: str
     base64_encoded_data: str
-    
+
+
+class ReportInterface(BaseModel):
+    healthy_meals: int
+    total_meals: int
+    unhealthy_meals: int
+    total_calories: int
+    average_calories: int
