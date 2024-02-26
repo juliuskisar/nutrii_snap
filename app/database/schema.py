@@ -25,15 +25,20 @@ class ClientSchema(CustomBaseModel):
     password: str
 
 
-class PictoreSchema(CustomBaseModel):
+class PictureSchema(CustomBaseModel):
     picture_uuid: str
     client_uuid: str
     name: str
     file_name: str
     is_healty: bool
-    ingredients: dict
+    ingredients: list[str]
     total_calories: str
-    nutrients: dict
+    nutrients: list[str]
     picture_base_64: str
 
+
+class UploadFileInterface(BaseModel):
+    client_uuid: str
+    name: str
+    base64_encoded_data: str
     

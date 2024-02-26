@@ -1,5 +1,5 @@
 from app.bootstrap import ApplicationBootstrap
-from app.database.schema import ClientSchema, ExampleSchema
+from app.database.schema import ClientSchema, ExampleSchema, PictureSchema, PictureSchema
 import settings
 from datetime import datetime
 
@@ -22,6 +22,15 @@ class Repository:
     def insert_picture(self, **kwargs):
         self.picture.insert_one(kwargs)
         return True
+
+    def get_all_pictures(self, **kwargs):
+        filter = {
+            k: v for k, v in kwargs.items()
+            if v is not None
+            and k in PictureSchema.__fields__.keys()
+        }
+        pictures = self.picture.find({**filter, "deleted_at": None})
+        return [PictureSchema(**picture) for picture in pictures]
 
     def get_example(self, **kwargs) -> ExampleSchema:
         example = self.example.find_one(kwargs)

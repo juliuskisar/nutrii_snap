@@ -1,14 +1,10 @@
 import base64
-import requests
-from app.database.schema import ClientSchema, PictoreSchema
+from app.database.schema import ClientSchema, PictureSchema, UploadFileInterface
 from app.service.service import Service
 from fastapi import APIRouter, HTTPException, UploadFile
 from fastapi_utils.cbv import cbv
 from uuid import uuid4
-from app.bootstrap import ApplicationBootstrap
 from app.database.repository import Repository
-import settings
-from datetime import datetime
 
 router = APIRouter()
 
@@ -29,6 +25,7 @@ class Controller:
         self.repository.insert_client(**client_schema.dict())
         return {
             "client_uuid": client_uuid,
+            "email": email,
         }
 
     @router.post("/login", status_code=201)
@@ -47,20 +44,20 @@ class Controller:
             raise HTTPException(status_code=400, detail="Usuário não encontrado")
         
     @router.post("/upload")
-    def upload_file(self, client_uuid, name: str, file: UploadFile = None):
-        file_content = file.file.read()
-        base64_encoded_data = base64.b64encode(file_content).decode('utf-8')
-        picture_extrated_info = self.service.extract_info_from_image(base64_encoded_data)
-        picture_schema = PictoreSchema(
+    def upload_file(self, picture: UploadFileInterface): #file: UploadFile = None):
+        # file_content = file.file.read()
+        # base64_encoded_data = base64.b64encode(file_content).decode('utf-8')
+        picture_extrated_info = self.service.extract_info_from_image(picture.base64_encoded_data)
+        picture_schema = PictureSchema(
             picture_uuid=f'picture_{str(uuid4())}',
-            client_uuid=client_uuid,
-            name="",
-            file_name=file.filename,
+            client_uuid=picture.client_uuid,
+            name=picture.name,
+            file_name=picture.name,
             is_healty=picture_extrated_info['saudável'],
-            ingredients=picture_extrated_info['composição'],
+            ingredients=picture_extrated_info['ingredientes'] if isinstance(picture_extrated_info['ingredientes'], list) else [picture_extrated_info['ingredientes']],
             total_calories=picture_extrated_info['calorias'],
-            nutrients=picture_extrated_info['nutrientes'],
-            picture_base_64=base64_encoded_data
+            nutrients=picture_extrated_info['nutrientes'] if isinstance(picture_extrated_info['nutrientes'], list) else [picture_extrated_info['nutrientes']],
+            picture_base_64=picture.base64_encoded_data
         )
         self.repository.insert_picture(**picture_schema.dict())
     
@@ -72,5 +69,8 @@ class Controller:
     def get_picture_info(self, client_uuid: str, picture_uuid: str):
         pass
 
+    @router.get("/get_meals_list")
+    def get_meals_list(self, client_uuid: str):
+        return self.repository.get_all_pictures(client_uuid=client_uuid)
 
 

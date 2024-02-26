@@ -35,30 +35,34 @@ class Service:
             ],
             "max_tokens": 4096
         }
-        # response = requests.post(settings.OPEN_AI["OPENAI_API_CHAT_COMPLETIONS_URL"], headers=headers, json=payload)
+        response = requests.post(settings.OPEN_AI["OPENAI_API_CHAT_COMPLETIONS_URL"], headers=headers, json=payload)
         # ajusting response
         try:
-            # content = response.json()['choices'][0]['message']['content']
-            # cleaned_string = content.strip('`')
-            # cleaned_string = '\n'.join(cleaned_string.split('\n')[1:])
-            # cleaned_string = cleaned_string.rsplit('\n', 1)[0]
-            # info = json.loads(cleaned_string)
-            info = RESPONSE_MOCK
-        except json.JSONDecodeError as err:
-            pass
+            content = response.json()['choices'][0]['message']['content']
+            cleaned_string = content.strip('`')
+            cleaned_string = '\n'.join(cleaned_string.split('\n')[1:])
+            cleaned_string = cleaned_string.rsplit('\n', 1)[0]
+            info = json.loads(cleaned_string)
+            # info = RESPONSE_MOCK
         except Exception as err:
-            pass
+            raise err
         return info
         
 
 PROMPT = '''
-    retorne as informações contidas na foto em relação aos itens do prato 
+    retorne no formato json descrito a seguir as informações contidas na foto em relação aos itens do prato 
     retorne um campo json chamado 'saudável' como true ou false em relação a se tratar de um prato saudável ou não 
-    retorne um campo json chamado 'composição' com os ingredientes contidos no prato 
-    retorne um campo json chamado 'nutrientes' com os nutrientes contidos no prato
-    retorne uma estimativa de valor calórico total no campo 'calorias' 
-    só retorne o json
+    retorne um campo json chamado 'ingredientes' com os ingredientes contidos no prato , em uma lista de ingredientes, ex: ['arroz', 'feijão', 'carne', 'legumes']
+    retorne um campo json chamado 'nutrientes' com os nutrientes contidos no prato em uma lista de strings, ex: ['vitamina A', 'vitamina C', 'ferro', 'cálcio']
+    retorne uma estimativa de valor calórico total no campo 'calorias', retorne somente o valor em calorias, ex: 500
+    retorne somente o json no formato descrito a seguir:
+    {
+        calorias: number;
+        ingredientes: string[];
+        nutrientes: string[];
+        saudável: boolean;
+        }
 '''
 
 
-RESPONSE_MOCK = {'saudável': True, 'composição': {'arroz': 'Arroz branco', 'carne': 'Bife de carne bovina', 'feijão': 'Feijão cozido', 'legumes': ['Tomate', 'Alface']}, 'nutrientes': {'carboidratos': 'Arroz', 'proteínas': ['Carne bovina', 'Feijão'], 'fibras': ['Feijão', 'Alface', 'Tomate'], 'vitaminas': ['Tomate', 'Alface'], 'minerais': ['Feijão', 'Carne bovina', 'Alface', 'Tomate']}, 'calorias': 'Aproximadamente 500-700 calorias'}
+RESPONSE_MOCK = {'calorias': 650, 'ingredientes': ['arroz', 'feijão', 'carne', 'alface', 'tomate'], 'nutrientes': ['proteína', 'fibra dietética', 'vitamina C', 'ferro', 'cálcio'], 'saudável': True}
