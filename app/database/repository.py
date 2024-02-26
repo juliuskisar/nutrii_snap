@@ -1,11 +1,27 @@
 from app.bootstrap import ApplicationBootstrap
-from app.database.schema import ExampleSchema
+from app.database.schema import ClientSchema, ExampleSchema
 import settings
 from datetime import datetime
 
-class ExampleRepository:
+class Repository:
     def __init__(self):
-        self.example = ApplicationBootstrap().get_mongo_client().example
+        self.client = ApplicationBootstrap().get_mongo_client().clients
+        self.picture = ApplicationBootstrap().get_mongo_client().pictures
+
+    def get_login(self, **kwargs):
+        try:
+            login = self.client.find_one(kwargs)
+            return ClientSchema(**login)
+        except Exception:
+            return None
+    
+    def insert_client(self, **kwargs):
+        self.client.insert_one(kwargs)
+        return True
+
+    def insert_picture(self, **kwargs):
+        self.picture.insert_one(kwargs)
+        return True
 
     def get_example(self, **kwargs) -> ExampleSchema:
         example = self.example.find_one(kwargs)

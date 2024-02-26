@@ -17,3 +17,23 @@ class CustomBaseModel(BaseModel):
 class ExampleSchema(CustomBaseModel):
     uuid: str
     name: str
+
+
+class ClientSchema(CustomBaseModel):
+    client_uuid: str
+    email: str
+    password: str
+
+
+class PictoreSchema(CustomBaseModel):
+    picture_uuid: str
+    client_uuid: str
+    name: str
+    file_name: str
+    is_healty: bool
+    ingredients: dict
+    total_calories: str
+    nutrients: dict
+    picture_base_64: str
+
+    

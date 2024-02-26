@@ -1,7 +1,7 @@
 from loguru import logger
 
 from fastapi import Depends, FastAPI
-import app.controllers.example_controller as ExampleController
+import app.controllers.controller as Controller
 
 from starlette.responses import RedirectResponse
 
@@ -41,8 +41,8 @@ async def redirect():
     return response
 
 app.include_router(
-    ExampleController.router,
-    prefix="/example",
-    tags=["Example Route"],
+    Controller.router,
+    prefix="/nutrii",
+    tags=["Nutrii Route"],
     # dependencies=[Depends(api_key)],
 )
