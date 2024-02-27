@@ -1,4 +1,3 @@
-import base64
 from collections import Counter
 from app.database.schema import ClientSchema, PictureSchema, ReportInterface, UploadFileInterface
 from app.service.service import Service
