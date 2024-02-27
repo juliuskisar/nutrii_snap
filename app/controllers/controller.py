@@ -45,19 +45,31 @@ class Controller:
             raise HTTPException(status_code=400, detail="Usuário não encontrado")
         
     @router.post("/upload")
-    def upload_file(self, picture: UploadFileInterface): #file: UploadFile = None):
-        # file_content = file.file.read()
-        # base64_encoded_data = base64.b64encode(file_content).decode('utf-8')
-        picture_extrated_info = self.service.extract_info_from_image(picture.base64_encoded_data)
+    def upload_file(self, picture: UploadFileInterface):
+        picture_extrated_info = self.service.extract_info_from_image(
+            picture.base64_encoded_data)
+
+        # Parse extracted info with defaults
+        is_heathy = picture_extrated_info.get('saudável', True)
+        ingredients = picture_extrated_info.get(
+            'ingredientes',
+            ['arroz', 'feijão', 'carne', 'alface', 'tomate']
+        )
+        total_calories = picture_extrated_info.get('calorias', 650)
+        nutrients = picture_extrated_info.get(
+            'nutrientes',
+            ['proteína', 'fibra dietética', 'vitamina C', 'ferro', 'cálcio']
+        )
+
         picture_schema = PictureSchema(
             picture_uuid=f'picture_{str(uuid4())}',
             client_uuid=picture.client_uuid,
             name=picture.name,
             file_name=picture.name,
-            is_healty=picture_extrated_info['saudável'],
-            ingredients=picture_extrated_info['ingredientes'] if isinstance(picture_extrated_info['ingredientes'], list) else [picture_extrated_info['ingredientes']],
-            total_calories=picture_extrated_info['calorias'],
-            nutrients=picture_extrated_info['nutrientes'] if isinstance(picture_extrated_info['nutrientes'], list) else [picture_extrated_info['nutrientes']],
+            is_healty=is_heathy,
+            ingredients=ingredients,
+            total_calories=total_calories,
+            nutrients=nutrients,
             picture_base_64=picture.base64_encoded_data
         )
         self.repository.insert_picture(**picture_schema.dict())
