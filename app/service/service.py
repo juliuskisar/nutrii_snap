@@ -36,6 +36,7 @@ class Service:
             "max_tokens": 4096
         }
         response = requests.post(settings.OPEN_AI["OPENAI_API_CHAT_COMPLETIONS_URL"], headers=headers, json=payload)
+        print(response.json())
         # ajusting response
         try:
             content = response.json()['choices'][0]['message']['content']
@@ -55,6 +56,7 @@ PROMPT = '''
     retorne um campo json chamado 'ingredientes' com os ingredientes contidos no prato , em uma lista de ingredientes, ex: ['arroz', 'feijão', 'carne', 'legumes']
     retorne um campo json chamado 'nutrientes' com os nutrientes contidos no prato em uma lista de strings, ex: ['vitamina A', 'vitamina C', 'ferro', 'cálcio']
     retorne uma estimativa de valor calórico total no campo 'calorias', retorne somente o valor em calorias, ex: 500
+    se for a imagem de uma bebida devolva o mesmo formato de json, com o campo 'ingredientes' vazio e o campo 'nutrientes' vazio
     retorne somente o json no formato descrito a seguir:
     {
         calorias: number;
