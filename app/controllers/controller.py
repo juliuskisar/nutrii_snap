@@ -76,6 +76,9 @@ class Controller:
             picture_base_64=picture.base64_encoded_data
         )
 
+        print("**************** OUTPUT ******************")
+        print(picture_schema)
+
         self.repository.insert_picture(**picture_schema.dict())
 
     @router.get("/get_weekly_report")
