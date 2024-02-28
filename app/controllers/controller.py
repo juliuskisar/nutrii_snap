@@ -8,6 +8,7 @@ from app.database.repository import Repository
 
 router = APIRouter()
 
+
 @cbv(router)
 class Controller:
     def __init__(self):
@@ -39,17 +40,19 @@ class Controller:
                         "client_uuid": login_info.client_uuid
                     }
                 else:
-                    raise HTTPException(status_code=400, detail="Senha incorreta")
+                    raise HTTPException(
+                        status_code=400, detail="Senha incorreta")
         except Exception:
-            raise HTTPException(status_code=400, detail="Usuário não encontrado")
-        
+            raise HTTPException(
+                status_code=400, detail="Usuário não encontrado")
+
     @router.post("/upload")
     def upload_file(self, picture: UploadFileInterface):
         picture_extrated_info = self.service.extract_info_from_image(
             picture.base64_encoded_data)
 
         # Parse extracted info with defaults
-        is_heathy = picture_extrated_info.get('saudável', True)
+        is_healthy = picture_extrated_info.get('saudável', True)
         ingredients = picture_extrated_info.get(
             'ingredientes',
             ['arroz', 'feijão', 'carne', 'alface', 'tomate']
@@ -65,18 +68,18 @@ class Controller:
             client_uuid=picture.client_uuid,
             name=picture.name,
             file_name=picture.name,
-            is_healty=is_heathy,
+            is_healthy=is_healthy,
             ingredients=ingredients,
             total_calories=total_calories,
             nutrients=nutrients,
             picture_base_64=picture.base64_encoded_data
         )
         self.repository.insert_picture(**picture_schema.dict())
-    
+
     @router.get("/get_weekly_report")
     def get_weekly_report(self):
         meals = self.repository.get_all_pictures()
-        healthy_counter = Counter([meal.is_healty for meal in meals])
+        healthy_counter = Counter([meal.is_healthy for meal in meals])
         total_calories = sum([int(meal.total_calories) for meal in meals])
         average_calories = total_calories / len(meals)
         return ReportInterface(

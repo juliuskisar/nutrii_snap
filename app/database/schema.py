@@ -30,7 +30,7 @@ class PictureSchema(CustomBaseModel):
     client_uuid: str
     name: str
     file_name: str
-    is_healty: bool
+    is_healthy: bool
     ingredients: list[str]
     total_calories: str
     nutrients: list[str]
