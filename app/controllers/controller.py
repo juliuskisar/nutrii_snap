@@ -1,4 +1,5 @@
 from collections import Counter
+import sys
 from app.database.schema import ClientSchema, PictureSchema, ReportInterface, UploadFileInterface
 from app.service.service import Service
 from fastapi import APIRouter, HTTPException
@@ -49,11 +50,16 @@ class Controller:
 
     @router.post("/upload")
     def upload_file(self, picture: UploadFileInterface):
+        print("**************** COMPRESSING ******************")
+        print(f"Original size: {sys.getsizeof(picture.base64_encoded_data) / 1024}")
+
         image_compressed = compress_image(
             base64_image=picture.base64_encoded_data,
             max_size=200,
             quality=50
         )
+
+        print(f"Compressed size: {sys.getsizeof(image_compressed) / 1024}")
 
         picture_extrated_info = self.service.extract_info_from_image(
             image_compressed
@@ -61,8 +67,8 @@ class Controller:
 
         # Parse extracted info with defaults
         is_healthy = picture_extrated_info.get('is_healthy', False)
-        ingredients = picture_extrated_info.get('ingredients', [])
-        total_calories = picture_extrated_info.get('calories', 123)
+        ingredients = picture_extrated_info.get('ingredientes', [])
+        total_calories = picture_extrated_info.get('calorias', 123)
 
         picture_schema = PictureSchema(
             picture_uuid=f'picture_{str(uuid4())}',
@@ -73,7 +79,7 @@ class Controller:
             ingredients=ingredients,
             total_calories=total_calories,
             nutrients=[],
-            picture_base_64=picture.base64_encoded_data
+            picture_base_64=image_compressed
         )
 
         print("**************** OUTPUT ******************")

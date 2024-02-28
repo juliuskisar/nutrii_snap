@@ -1,3 +1,4 @@
+from time import sleep
 import requests
 import settings
 
@@ -10,7 +11,10 @@ class Service:
         self.openai_completions_url = settings.OPEN_AI['OPENAI_API_COMPLETIONS_URL']
         self.openai_chat_completions_url = settings.OPEN_AI['OPENAI_API_CHAT_COMPLETIONS_URL']
 
-    def extract_info_from_image(self, base64_encoded_data: str):
+    def extract_info_from_image(self, base64_encoded_data: str, attempt: int = 0):
+        if attempt > 2:
+            return {'error': 'Could not extract information from image. Please try again later.'}
+
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.openai_api_key}"
@@ -36,22 +40,33 @@ class Service:
             ],
             "max_tokens": 4096
         }
-        response = requests.post(
-            settings.OPEN_AI["OPENAI_API_CHAT_COMPLETIONS_URL"], headers=headers, json=payload)
+        print("**************** OPENAI ******************")
+        print("Request sent...")
 
-        with open("./response.txt", 'w') as f:
-            f.write(str(response.json()))
+        response = requests.post(
+            self.openai_chat_completions_url, headers=headers, json=payload
+        )
 
         print(response.json())
-        # ajusting response
+
+        # parse response
         try:
-            content = response.json()['choices'][0]['message']['content']
-            cleaned_string = content.strip('`')
-            cleaned_string = '\n'.join(cleaned_string.split('\n')[1:])
-            cleaned_string = cleaned_string.rsplit('\n', 1)[0]
-            info = json.loads(cleaned_string)
+            parsed_str = response.json()['choices'][0]['message']['content']
+            parsed_str = parsed_str.replace("\n", "")
+            parsed_str = parsed_str.replace("\t", "")
+            parsed_str = parsed_str.replace("`", "")
+            parsed_str = parsed_str.replace("json", "")
+
+            print("**************** PARSED ******************")
+            print(parsed_str)
+
+            info = json.loads(parsed_str)
         except Exception as err:
-            raise err
+            print("ERROR: ", err)
+            print("Attempting again...")
+            sleep(0.5)
+            breakpoint()
+            return self.extract_info_from_image(base64_encoded_data, attempt + 1)
         return info
 
 
@@ -77,24 +92,24 @@ You are a nutritionist AI bot and you need to identify the following nutritional
 	- The ingredients of the dish
 	- The total caloric value of the dish
 
-You need to return a JSON with the following fields:
+You need to return a JSON in portuguese with the following fields:
 {
-	"calories": int,
-	"ingredients": list[str],
+	"calorias": int,
+	"ingredientes": list[str],
 	"is_healthy": boolean,
 }
 
 For example, if the dish is a salad, return the following JSON:
 {
-	"calories": 300,
-	"ingredients": ["lettuce", "tomato", "carrot"],
+	"calorias": 300,
+	"ingredientes": ["alface", "tomate", "cenora"],
 	"is_healthy": true,
 }
 
 Another example, if the dish is a hamburger, return the following JSON:
 {
-	"calories": 800,
-	"ingredients": ["meat", "bread", "cheese"],
+	"calorias": 800,
+	"ingredientes": ["carne", "pao", "queijo"],
 	"is_healthy": false,
 }
 
