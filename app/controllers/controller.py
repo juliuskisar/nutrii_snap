@@ -1,10 +1,11 @@
 from collections import Counter
 from app.database.schema import ClientSchema, PictureSchema, ReportInterface, UploadFileInterface
 from app.service.service import Service
-from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException
 from fastapi_utils.cbv import cbv
 from uuid import uuid4
 from app.database.repository import Repository
+from app.utils.compress_image import compress_image
 
 router = APIRouter()
 
@@ -48,20 +49,20 @@ class Controller:
 
     @router.post("/upload")
     def upload_file(self, picture: UploadFileInterface):
+        image_compressed = compress_image(
+            base64_image=picture.base64_encoded_data,
+            max_size=200,
+            quality=50
+        )
+
         picture_extrated_info = self.service.extract_info_from_image(
-            picture.base64_encoded_data)
+            image_compressed
+        )
 
         # Parse extracted info with defaults
-        is_healthy = picture_extrated_info.get('saudável', True)
-        ingredients = picture_extrated_info.get(
-            'ingredientes',
-            ['arroz', 'feijão', 'carne', 'alface', 'tomate']
-        )
-        total_calories = picture_extrated_info.get('calorias', 650)
-        nutrients = picture_extrated_info.get(
-            'nutrientes',
-            ['proteína', 'fibra dietética', 'vitamina C', 'ferro', 'cálcio']
-        )
+        is_healthy = picture_extrated_info.get('is_healthy', False)
+        ingredients = picture_extrated_info.get('ingredients', [])
+        total_calories = picture_extrated_info.get('calories', 123)
 
         picture_schema = PictureSchema(
             picture_uuid=f'picture_{str(uuid4())}',
@@ -71,9 +72,10 @@ class Controller:
             is_healthy=is_healthy,
             ingredients=ingredients,
             total_calories=total_calories,
-            nutrients=nutrients,
+            nutrients=[],
             picture_base_64=picture.base64_encoded_data
         )
+
         self.repository.insert_picture(**picture_schema.dict())
 
     @router.get("/get_weekly_report")
