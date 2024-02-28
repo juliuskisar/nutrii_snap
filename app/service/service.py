@@ -1,5 +1,5 @@
 import requests
-import settings
+import app.settings as settings
 
 import json
 

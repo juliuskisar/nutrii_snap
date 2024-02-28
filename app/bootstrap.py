@@ -1,5 +1,5 @@
 import certifi
-import settings
+import app.settings as settings
 from pymongo import MongoClient
 
 class ApplicationBootstrap:

@@ -1,6 +1,6 @@
 from app.bootstrap import ApplicationBootstrap
 from app.database.schema import ClientSchema, ExampleSchema, PictureSchema, PictureSchema
-import settings
+import app.settings as settings
 from datetime import datetime
 
 class Repository:

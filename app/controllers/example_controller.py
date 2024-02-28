@@ -5,7 +5,7 @@ from fastapi_utils.cbv import cbv
 from uuid import uuid4
 from app.bootstrap import ApplicationBootstrap
 from app.database.repository import ExampleRepository
-import settings
+import app.settings as settings
 from datetime import datetime
 
 router = APIRouter()
