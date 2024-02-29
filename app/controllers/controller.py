@@ -69,7 +69,7 @@ class Controller:
         is_healthy = picture_extrated_info.get('is_healthy', False)
         ingredients = picture_extrated_info.get('ingredientes', [])
         total_calories = picture_extrated_info.get('calorias', 123)
-        comment = picture_extrated_info.get('comment', 'Wow, que original')
+        comment = picture_extrated_info.get('comentario', 'Wow, que original')
 
         picture_schema = PictureSchema(
             picture_uuid=f'picture_{str(uuid4())}',
