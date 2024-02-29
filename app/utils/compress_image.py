@@ -4,7 +4,7 @@ from PIL import Image
 import io
 
 
-def compress_image(base64_image, max_size=200.0, quality=50):
+def compress_image(base64_image, max_size=300.0, quality=60):
     image_bytes = io.BytesIO(base64.b64decode(base64_image))
     pil_image = Image.open(image_bytes)
     x, y = pil_image.size

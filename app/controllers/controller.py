@@ -56,7 +56,7 @@ class Controller:
         image_compressed = compress_image(
             base64_image=picture.base64_encoded_data,
             max_size=400,
-            quality=80
+            quality=60
         )
 
         print(f"Compressed size: {sys.getsizeof(image_compressed) / 1024}")
