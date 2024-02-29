@@ -108,3 +108,11 @@ class Controller:
     @router.get("/get_meals_list")
     def get_meals_list(self, client_uuid: str):
         return self.repository.get_all_pictures(client_uuid=client_uuid)
+
+    @router.get("/get_pic_sizes")
+    def get_pic_sizes(self, client_uuid: str):
+        pics = self.repository.get_all_pictures(client_uuid=client_uuid)
+        string = [f"{p.name}=>{sys.getsizeof(p.picture_base_64) / 1024}" for p in pics]
+        for each in string:
+            print(each)
+        return string
