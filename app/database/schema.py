@@ -35,6 +35,7 @@ class PictureSchema(CustomBaseModel):
     total_calories: str
     nutrients: list[str]
     picture_base_64: str
+    comment: str
 
 
 class UploadFileInterface(BaseModel):
