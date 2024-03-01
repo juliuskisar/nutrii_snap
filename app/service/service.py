@@ -40,13 +40,13 @@ class Service:
             ],
             "max_tokens": 4096
         }
-        print("**************** OPENAI ******************")
-        print("Request sent...")
+        print("**************** OPENAI REQUEST ******************")
 
         response = requests.post(
             self.openai_chat_completions_url, headers=headers, json=payload
         )
 
+        print("**************** OPENAI RESPONSE ******************")
         print(response.json())
 
         # parse response

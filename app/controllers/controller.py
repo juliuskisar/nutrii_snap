@@ -51,7 +51,8 @@ class Controller:
     @router.post("/upload")
     def upload_file(self, picture: UploadFileInterface):
         print("**************** COMPRESSING ******************")
-        print(f"Original size: {sys.getsizeof(picture.base64_encoded_data) / 1024}")
+        print(
+            f"Original size: {sys.getsizeof(picture.base64_encoded_data) / 1024}")
 
         image_compressed = compress_image(
             base64_image=picture.base64_encoded_data,
@@ -67,9 +68,17 @@ class Controller:
 
         # Parse extracted info with defaults
         is_healthy = picture_extrated_info.get('is_healthy', False)
-        ingredients = picture_extrated_info.get('ingredientes', [])
+        is_healthy = is_healthy if isinstance(is_healthy, bool) else False
+
+        ingredients = picture_extrated_info.get('ingredientes', ['ar'])
+        ingredients = ingredients if isinstance(ingredients, list) else ['ar']
+
         total_calories = picture_extrated_info.get('calorias', 123)
+        total_calories = total_calories if isinstance(
+            total_calories, int) else 123
+
         comment = picture_extrated_info.get('comment', 'Wow, que original')
+        comment = comment if isinstance(comment, str) else 'Wow, que original'
 
         picture_schema = PictureSchema(
             picture_uuid=f'picture_{str(uuid4())}',
@@ -84,8 +93,12 @@ class Controller:
             comment=comment
         )
 
-        print("**************** OUTPUT ******************")
-        print(picture_schema)
+        print("**************** FINAL OUTPUT ******************")
+        print(f"Name: {picture_schema.name}")
+        print(f"Is healthy: {picture_schema.is_healthy}")
+        print(f"Ingredients: {picture_schema.ingredients}")
+        print(f"Total calories: {picture_schema.total_calories}")
+        print(f"Comment: {picture_schema.comment}")
 
         self.repository.insert_picture(**picture_schema.dict())
 
@@ -114,7 +127,8 @@ class Controller:
     @router.get("/get_pic_sizes")
     def get_pic_sizes(self, client_uuid: str):
         pics = self.repository.get_all_pictures(client_uuid=client_uuid)
-        string = [f"{p.name}=>{sys.getsizeof(p.picture_base_64) / 1024}" for p in pics]
+        string = [
+            f"{p.name}=>{sys.getsizeof(p.picture_base_64) / 1024}" for p in pics]
         for each in string:
             print(each)
         return string
