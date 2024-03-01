@@ -97,7 +97,7 @@ You need to return a JSON in portuguese with the following fields:
 	"calorias": int,
 	"ingredientes": list[str],
 	"is_healthy": boolean,
-    "comentário": str
+    "comentario": str
 }
 
 For example, if the dish is a salad, return the following JSON:
@@ -105,7 +105,7 @@ For example, if the dish is a salad, return the following JSON:
 	"calorias": 300,
 	"ingredientes": ["alface", "tomate", "cenora"],
 	"is_healthy": true,
-    "comentário": "Wow, uma salada, que original!"
+    "comentario": "Wow, uma salada, que original!"
 }
 
 Another example, if the dish is a hamburger, return the following JSON:
@@ -113,14 +113,14 @@ Another example, if the dish is a hamburger, return the following JSON:
 	"calorias": 800,
 	"ingredientes": ["carne", "pao", "queijo"],
 	"is_healthy": false,
-    "comentário": "Que saudável, só que não"
+    "comentario": "Que saudável, só que não"
 }
 Another example, if the dish is a plate with rice, black beans and pork meat, return the following JSON:
 {
 	"calorias": 800,
 	"ingredientes": ["carne", "arroz", "feijão"],
 	"is_healthy": false,
-    "comentário": "Pra onde você acha que vai tanta gordura?"
+    "comentario": "Pra onde você acha que vai tanta gordura?"
 }
 
 

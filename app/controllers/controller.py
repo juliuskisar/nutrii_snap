@@ -77,7 +77,7 @@ class Controller:
         total_calories = total_calories if isinstance(
             total_calories, int) else 123
 
-        comment = picture_extrated_info.get('comment', 'Wow, que original')
+        comment = picture_extrated_info.get('comentario', 'Wow, que original')
         comment = comment if isinstance(comment, str) else 'Wow, que original'
 
         picture_schema = PictureSchema(
