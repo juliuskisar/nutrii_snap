@@ -50,9 +50,9 @@ class Controller:
 
     @router.post("/upload")
     def upload_file(self, picture: UploadFileInterface):
-        print("**************** COMPRESSING ******************")
-        print(
-            f"Original size: {sys.getsizeof(picture.base64_encoded_data) / 1024}")
+        # print("**************** COMPRESSING ******************")
+        # print(
+        #     f"Original size: {sys.getsizeof(picture.base64_encoded_data) / 1024}")
 
         image_compressed = compress_image(
             base64_image=picture.base64_encoded_data,
@@ -60,7 +60,7 @@ class Controller:
             quality=70
         )
 
-        print(f"Compressed size: {sys.getsizeof(image_compressed) / 1024}")
+        # print(f"Compressed size: {sys.getsizeof(image_compressed) / 1024}")
 
         picture_extrated_info = self.service.extract_info_from_image(
             image_compressed
@@ -93,12 +93,12 @@ class Controller:
             comment=comment
         )
 
-        print("**************** FINAL OUTPUT ******************")
-        print(f"Name: {picture_schema.name}")
-        print(f"Is healthy: {picture_schema.is_healthy}")
-        print(f"Ingredients: {picture_schema.ingredients}")
-        print(f"Total calories: {picture_schema.total_calories}")
-        print(f"Comment: {picture_schema.comment}")
+        # print("**************** FINAL OUTPUT ******************")
+        # print(f"Name: {picture_schema.name}")
+        # print(f"Is healthy: {picture_schema.is_healthy}")
+        # print(f"Ingredients: {picture_schema.ingredients}")
+        # print(f"Total calories: {picture_schema.total_calories}")
+        # print(f"Comment: {picture_schema.comment}")
 
         self.repository.insert_picture(**picture_schema.dict())
 

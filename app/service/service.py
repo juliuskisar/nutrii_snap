@@ -12,7 +12,7 @@ class Service:
         self.openai_chat_completions_url = settings.OPEN_AI['OPENAI_API_CHAT_COMPLETIONS_URL']
 
     def extract_info_from_image(self, base64_encoded_data: str, attempt: int = 0):
-        if attempt > 2:
+        if attempt > 1:
             return {'error': 'Could not extract information from image. Please try again later.'}
 
         headers = {
@@ -40,14 +40,14 @@ class Service:
             ],
             "max_tokens": 4096
         }
-        print("**************** OPENAI REQUEST ******************")
+        # print("**************** OPENAI REQUEST ******************")
 
         response = requests.post(
             self.openai_chat_completions_url, headers=headers, json=payload
         )
 
-        print("**************** OPENAI RESPONSE ******************")
-        print(response.json())
+        # print("**************** OPENAI RESPONSE ******************")
+        # print(response.json())
 
         # parse response
         try:
@@ -57,8 +57,8 @@ class Service:
             parsed_str = parsed_str.replace("`", "")
             parsed_str = parsed_str.replace("json", "")
 
-            print("**************** PARSED ******************")
-            print(parsed_str)
+            # print("**************** PARSED ******************")
+            # print(parsed_str)
 
             info = json.loads(parsed_str)
         except Exception as err:
